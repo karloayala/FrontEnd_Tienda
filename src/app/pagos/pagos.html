@@ -1,1 +1,241 @@
-<p>pagos works!</p>
+
+<div class="card-tech">
+
+  <!-- CABECERA -->
+  <div class="card-header">
+    <div>
+      <h2>Plan de Pagos</h2>
+      <p>Selecciona una venta y configura su modalidad de pago.</p>
+    </div>
+  </div>
+
+  <form #planForm="ngForm" (ngSubmit)="onSubmit(planForm)">
+
+    <!-- SELECCIÓN DE VENTA -->
+    <div class="selection-section">
+      <label>Seleccionar venta</label>
+
+      <select
+        name="ventaId"
+        [(ngModel)]="ventaId"
+        required
+        #venta="ngModel">
+
+        <option [ngValue]="null">Seleccione una venta</option>
+
+        <option *ngFor="let item of ventas" [ngValue]="item.id">
+          Venta #{{ item.id }} - S/ {{ item.total.toFixed(2) }}
+        </option>
+
+      </select>
+
+      <div class="error-msg" *ngIf="venta.invalid && venta.touched">
+        Debe seleccionar una venta.
+      </div>
+    </div>
+
+    <!-- CONTENIDO EN DOS COLUMNAS -->
+    <div class="main-layout" *ngIf="ventaSeleccionada as seleccionada">
+
+      <!-- COLUMNA IZQUIERDA -->
+      <div class="left-column">
+
+        <!-- CONFIGURACIÓN DEL PAGO -->
+        <section class="panel">
+          <div class="section-header">
+            <h3>Configuración del pago</h3>
+          </div>
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Tipo de pago</label>
+
+              <select
+                name="tipoPago"
+                [(ngModel)]="tipoPago"
+                required>
+
+                <option value="CONTADO">Contado</option>
+                <option value="CUOTAS">Por cuotas</option>
+
+              </select>
+            </div>
+
+            <div class="form-group" *ngIf="tipoPago === 'CUOTAS'">
+              <label>Cantidad de cuotas</label>
+
+              <input
+                type="number"
+                name="cantCuotas"
+                [(ngModel)]="cantCuotas"
+                required
+                min="1"
+                max="36"
+                step="1"
+                #cantidad="ngModel">
+
+              <div class="error-msg"
+                *ngIf="cantidad.invalid && cantidad.touched">
+
+                <span *ngIf="cantidad.errors?.['required']">
+                  La cantidad es obligatoria.
+                </span>
+
+                <span *ngIf="cantidad.errors?.['min']">
+                  Mínimo 1 cuota.
+                </span>
+
+                <span *ngIf="cantidad.errors?.['max']">
+                  Máximo 36 cuotas.
+                </span>
+
+              </div>
+
+              <small class="field-hint">Puedes generar entre 1 y 36 cuotas.</small>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- CUOTAS GENERADAS -->
+        <section class="panel" *ngIf="tipoPago === 'CUOTAS'">
+
+          <div class="section-header">
+            <h3>Distribución de cuotas</h3>
+
+            <span class="badge-count">
+              {{ cuotasGeneradas.length }} cuotas
+            </span>
+          </div>
+
+          <p class="info-text">
+            Los montos y las fechas se calculan automáticamente.
+            Todas las cuotas tendrán estado pendiente.
+          </p>
+
+          <div class="table-container">
+            <table class="cuotas-table">
+              <thead>
+                <tr>
+                  <th>N.º</th>
+                  <th>Monto</th>
+                  <th>Vencimiento</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let cuota of cuotasGeneradas">
+                  <td>Cuota {{ cuota.numeroCuota }}</td>
+
+                  <td>
+                    S/ {{ cuota.monto.toFixed(2) }}
+                  </td>
+
+                  <td>
+                    {{ cuota.fechaVencimiento | date:'dd/MM/yyyy' }}
+                  </td>
+
+                  <td>
+                    <span class="estado-pendiente">
+                      {{ cuota.estado }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="empty-message"
+            *ngIf="cuotasGeneradas.length === 0">
+            Ingresa una cantidad válida de cuotas para ver la distribución.
+          </p>
+
+        </section>
+
+        <!-- MENSAJE PARA PAGO AL CONTADO -->
+        <section class="panel contado-info" *ngIf="tipoPago === 'CONTADO'">
+          <div class="contado-icon">✓</div>
+          <div>
+            <strong>Pago al contado</strong>
+            <p>La venta se registrará, sin generar cuotas.</p>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- COLUMNA DERECHA -->
+      <aside class="right-column">
+
+        <section class="panel sale-panel">
+
+          <div class="section-header">
+            <h3>Detalle de la venta</h3>
+            <span class="badge-count">#{{ seleccionada.id }}</span>
+          </div>
+
+          <p class="fecha-venta">
+            Fecha: {{ seleccionada.fecha }}
+          </p>
+
+          <div class="sale-items">
+
+            <div class="sale-item" *ngFor="let detalle of seleccionada.detalles">
+
+              <div class="item-description">
+                <strong>{{ detalle.producto }}</strong>
+                <span>{{ detalle.cantidad }} unidad(es) × S/ {{ detalle.precioUnitario.toFixed(2) }}</span>
+              </div>
+
+              <strong class="item-subtotal">
+                S/ {{ detalle.subtotal.toFixed(2) }}
+              </strong>
+
+            </div>
+
+          </div>
+
+          <!-- RESUMEN DE VENTA -->
+          <div class="sale-summary">
+
+            <div class="summary-line">
+              <span>Productos</span>
+              <strong>{{ seleccionada.detalles.length }}</strong>
+            </div>
+
+            <div class="summary-line">
+              <span>Unidades</span>
+              <strong>
+                {{ totalUnidades }}
+              </strong>
+            </div>
+
+            <div class="summary-total">
+              <span>Total de venta</span>
+              <strong>
+                S/ {{ seleccionada.total.toFixed(2) }}
+              </strong>
+            </div>
+
+          </div>
+
+          <!-- BOTÓN -->
+          <button
+            type="submit"
+            class="btn-tech"
+            [disabled]="planForm.invalid ||
+              (tipoPago === 'CUOTAS' && !cantidadCuotasValida)">
+
+            Registrar plan de pagos
+
+          </button>
+
+        </section>
+
+      </aside>
+
+    </div>
+
+  </form>
+</div>

@@ -1,0 +1,289 @@
+/* TARJETA PRINCIPAL */
+.card-tech {
+  max-width: 1350px;
+  width: calc(100% - 40px);
+  margin: 24px auto;
+  padding: 1.8rem 2rem;
+  background: #fff;
+  border-top: 5px solid #0284c7;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, .08);
+  box-sizing: border-box;
+}
+
+/* CABECERA */
+.card-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.card-header h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.6rem;
+}
+
+.card-header p,
+.fecha-venta {
+  color: #64748b;
+  font-size: .9rem;
+}
+
+/* FORMULARIOS */
+label {
+  display: block;
+  margin-bottom: .4rem;
+  color: #334155;
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+input, select {
+  width: 100%;
+  padding: .7rem .85rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: .95rem;
+  box-sizing: border-box;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2,132,199,.15);
+}
+
+.selection-section {
+  max-width: 480px;
+  margin-bottom: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* DISTRIBUCIÓN */
+.main-layout {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.panel {
+  padding: 1.3rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.sale-panel {
+  position: sticky;
+  top: 20px;
+}
+
+/* ENCABEZADOS */
+.section-header,
+.summary-line,
+.summary-total,
+.sale-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .7rem;
+}
+
+.section-header {
+  margin-bottom: 1rem;
+}
+
+.section-header h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.05rem;
+}
+
+.badge-count {
+  padding: .35rem .7rem;
+  background: #e0f2fe;
+  color: #0369a1;
+  border-radius: 20px;
+  font-size: .75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* DETALLE DE VENTA */
+.fecha-venta {
+  margin-bottom: 1rem;
+}
+
+.sale-item {
+  padding: .9rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.item-description {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
+
+.item-description strong,
+.item-subtotal {
+  color: #0f172a;
+  font-size: .9rem;
+}
+
+.item-description span {
+  color: #64748b;
+  font-size: .8rem;
+}
+
+.sale-summary {
+  margin-top: 1rem;
+}
+
+.summary-line {
+  padding: .4rem 0;
+  color: #64748b;
+  font-size: .9rem;
+}
+
+.summary-total {
+  margin-top: .7rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.summary-total strong {
+  font-size: 1.35rem;
+}
+
+/* TABLA */
+.info-text,
+.empty-message,
+.field-hint {
+  color: #64748b;
+  font-size: .83rem;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .83rem;
+}
+
+thead {
+  background: #f1f5f9;
+}
+
+th, td {
+  padding: .75rem .6rem;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+th {
+  color: #334155;
+}
+
+td {
+  color: #475569;
+}
+
+.cuotas-table td:nth-child(2) {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* ESTADOS */
+.estado-pendiente {
+  display: inline-block;
+  padding: .3rem .55rem;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: 700;
+}
+
+.contado-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #f0f9ff;
+}
+
+.contado-icon {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  background: #dbeafe;
+  color: #0369a1;
+  border-radius: 50%;
+  font-weight: 700;
+}
+
+.contado-info p {
+  color: #64748b;
+  font-size: .85rem;
+}
+
+/* MENSAJES */
+.error-msg {
+  margin-top: .35rem;
+  color: #dc2626;
+  font-size: .8rem;
+}
+
+.empty-message {
+  margin-top: 1rem;
+}
+
+/* BOTÓN */
+.btn-tech {
+  width: 100%;
+  margin-top: 1rem;
+  padding: .9rem;
+  background: linear-gradient(135deg, #0284c7, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.btn-tech:hover:not(:disabled) {
+  transform: translateY(-1px);
+  opacity: .95;
+}
+
+.btn-tech:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
