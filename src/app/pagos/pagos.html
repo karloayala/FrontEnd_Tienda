@@ -1,105 +1,143 @@
-
 <div class="card-tech">
 
   <!-- CABECERA -->
   <div class="card-header">
     <div>
       <h2>Plan de Pagos</h2>
-      <p>Selecciona una venta y configura su modalidad de pago.</p>
+      <p>Selecciona una venta y configura su plan de cuotas.</p>
     </div>
   </div>
 
-  <form #planForm="ngForm" (ngSubmit)="onSubmit(planForm)">
+  <!-- SELECCIÓN DE VENTAS -->
+  <div *ngIf="!mostrarConfiguracion">
 
-    <!-- SELECCIÓN DE VENTA -->
-    <div class="selection-section">
-      <label>Seleccionar venta</label>
-
-      <select
-        name="ventaId"
-        [(ngModel)]="ventaId"
-        required
-        #venta="ngModel">
-
-        <option [ngValue]="null">Seleccione una venta</option>
-
-        <option *ngFor="let item of ventas" [ngValue]="item.id">
-          Venta #{{ item.id }} - S/ {{ item.total.toFixed(2) }}
-        </option>
-
-      </select>
-
-      <div class="error-msg" *ngIf="venta.invalid && venta.touched">
-        Debe seleccionar una venta.
-      </div>
+    <div class="selection-heading">
+      <h3>Seleccionar venta</h3>
+      <p>Elige una venta para configurar su plan de pagos.</p>
     </div>
 
-    <!-- CONTENIDO EN DOS COLUMNAS -->
+    <div class="ventas-grid">
+
+      <div
+        class="venta-card"
+        *ngFor="let item of ventas"
+        (click)="seleccionarVenta(item)">
+
+        <div class="venta-card-header">
+          <span class="venta-icon">▣</span>
+          <span class="badge-count">Venta #{{ item.id }}</span>
+        </div>
+
+        <div class="venta-card-body">
+          <h3>Venta #{{ item.id }}</h3>
+
+          <p class="venta-fecha">
+            Fecha: {{ item.fecha | date:'dd/MM/yyyy' }}
+          </p>
+
+          <div class="venta-productos">
+            <strong>{{ item.detalles.length }} productos diferentes</strong>
+            <small>
+              {{ mostrarProductos(item.detalles) }}
+              <span *ngIf="item.detalles.length > 3"> y más...</span>
+            </small>
+          </div>
+        </div>
+
+        <div class="venta-card-footer">
+          <div>
+            <small>Total de venta</small>
+            <strong>S/ {{ item.total.toFixed(2) }}</strong>
+          </div>
+
+          <button type="button" class="btn-select">
+            Seleccionar
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CONFIGURACIÓN DEL PLAN -->
+  <form #planForm="ngForm" *ngIf="mostrarConfiguracion">
+
+    <button
+      type="button"
+      class="btn-back"
+      (click)="volverVentas()">
+      ← Volver a las ventas
+    </button>
+
     <div class="main-layout" *ngIf="ventaSeleccionada as seleccionada">
 
       <!-- COLUMNA IZQUIERDA -->
       <div class="left-column">
 
-        <!-- CONFIGURACIÓN DEL PAGO -->
+        <!-- CONFIGURACIÓN -->
         <section class="panel">
+
           <div class="section-header">
             <h3>Configuración del pago</h3>
+            <span class="badge-count">Paso 1</span>
           </div>
 
-          <div class="form-grid">
+          <div class="payment-type-fixed">
+            <div class="payment-type-icon">▤</div>
 
-            <div class="form-group">
-              <label>Tipo de pago</label>
-
-              <select
-                name="tipoPago"
-                [(ngModel)]="tipoPago"
-                required>
-
-                <option value="CONTADO">Contado</option>
-                <option value="CUOTAS">Por cuotas</option>
-
-              </select>
+            <div>
+              <strong>Pago por cuotas</strong>
+              <p>La venta se dividirá en pagos mensuales.</p>
             </div>
 
-            <div class="form-group" *ngIf="tipoPago === 'CUOTAS'">
-              <label>Cantidad de cuotas</label>
-
-              <input
-                type="number"
-                name="cantCuotas"
-                [(ngModel)]="cantCuotas"
-                required
-                min="1"
-                max="36"
-                step="1"
-                #cantidad="ngModel">
-
-              <div class="error-msg"
-                *ngIf="cantidad.invalid && cantidad.touched">
-
-                <span *ngIf="cantidad.errors?.['required']">
-                  La cantidad es obligatoria.
-                </span>
-
-                <span *ngIf="cantidad.errors?.['min']">
-                  Mínimo 1 cuota.
-                </span>
-
-                <span *ngIf="cantidad.errors?.['max']">
-                  Máximo 36 cuotas.
-                </span>
-
-              </div>
-
-              <small class="field-hint">Puedes generar entre 1 y 36 cuotas.</small>
-            </div>
-
+            <span class="fixed-label">Seleccionado</span>
           </div>
+
+          <div class="form-group">
+            <label for="cantCuotas">Cantidad de cuotas</label>
+
+            <input
+              id="cantCuotas"
+              type="number"
+              name="cantCuotas"
+              [(ngModel)]="cantCuotas"
+              required
+              min="1"
+              max="36"
+              step="1"
+              #cantidad="ngModel">
+
+            <div
+              class="error-msg"
+              *ngIf="cantidad.invalid && cantidad.touched">
+
+              <span *ngIf="cantidad.errors?.['required']">
+                La cantidad es obligatoria.
+              </span>
+
+              <span *ngIf="cantidad.errors?.['min']">
+                Mínimo 1 cuota.
+              </span>
+
+              <span *ngIf="cantidad.errors?.['max']">
+                Máximo 36 cuotas.
+              </span>
+
+              <span *ngIf="cantidad.errors?.['pattern']">
+                Ingresa un número válido.
+              </span>
+            </div>
+
+            <small class="field-hint">
+              Puedes generar entre 1 y 36 cuotas.
+            </small>
+          </div>
+
         </section>
 
-        <!-- CUOTAS GENERADAS -->
-        <section class="panel" *ngIf="tipoPago === 'CUOTAS'">
+        <!-- DISTRIBUCIÓN DE CUOTAS -->
+        <section class="panel">
 
           <div class="section-header">
             <h3>Distribución de cuotas</h3>
@@ -115,7 +153,9 @@
           </p>
 
           <div class="table-container">
+
             <table class="cuotas-table">
+
               <thead>
                 <tr>
                   <th>N.º</th>
@@ -128,15 +168,10 @@
               <tbody>
                 <tr *ngFor="let cuota of cuotasGeneradas">
                   <td>Cuota {{ cuota.numeroCuota }}</td>
-
-                  <td>
-                    S/ {{ cuota.monto.toFixed(2) }}
-                  </td>
-
+                  <td>S/ {{ cuota.monto.toFixed(2) }}</td>
                   <td>
                     {{ cuota.fechaVencimiento | date:'dd/MM/yyyy' }}
                   </td>
-
                   <td>
                     <span class="estado-pendiente">
                       {{ cuota.estado }}
@@ -144,23 +179,15 @@
                   </td>
                 </tr>
               </tbody>
+
             </table>
+
           </div>
 
-          <p class="empty-message"
-            *ngIf="cuotasGeneradas.length === 0">
+          <p class="empty-message" *ngIf="cuotasGeneradas.length === 0">
             Ingresa una cantidad válida de cuotas para ver la distribución.
           </p>
 
-        </section>
-
-        <!-- MENSAJE PARA PAGO AL CONTADO -->
-        <section class="panel contado-info" *ngIf="tipoPago === 'CONTADO'">
-          <div class="contado-icon">✓</div>
-          <div>
-            <strong>Pago al contado</strong>
-            <p>La venta se registrará, sin generar cuotas.</p>
-          </div>
         </section>
 
       </div>
@@ -176,59 +203,57 @@
           </div>
 
           <p class="fecha-venta">
-            Fecha: {{ seleccionada.fecha }}
+            Fecha: {{ seleccionada.fecha | date:'dd/MM/yyyy' }}
           </p>
 
-          <div class="sale-items">
-
-            <div class="sale-item" *ngFor="let detalle of seleccionada.detalles">
-
-              <div class="item-description">
-                <strong>{{ detalle.producto }}</strong>
-                <span>{{ detalle.cantidad }} unidad(es) × S/ {{ detalle.precioUnitario.toFixed(2) }}</span>
-              </div>
-
-              <strong class="item-subtotal">
-                S/ {{ detalle.subtotal.toFixed(2) }}
-              </strong>
-
-            </div>
-
-          </div>
+          <button
+            type="button"
+            class="btn-detail"
+            (click)="abrirModalDetalle()">
+            Ver detalle completo
+          </button>
 
           <!-- RESUMEN DE VENTA -->
           <div class="sale-summary">
 
             <div class="summary-line">
-              <span>Productos</span>
+              <span>Productos diferentes</span>
               <strong>{{ seleccionada.detalles.length }}</strong>
             </div>
 
             <div class="summary-line">
               <span>Unidades</span>
-              <strong>
-                {{ totalUnidades }}
-              </strong>
+              <strong>{{ totalUnidades }}</strong>
             </div>
 
             <div class="summary-total">
               <span>Total de venta</span>
-              <strong>
-                S/ {{ seleccionada.total.toFixed(2) }}
-              </strong>
+              <strong>S/ {{ seleccionada.total.toFixed(2) }}</strong>
             </div>
 
           </div>
 
-          <!-- BOTÓN -->
+          <!-- RESUMEN DEL PLAN -->
+          <div class="payment-summary">
+
+            <span>Total del plan de pagos</span>
+
+            <strong>
+              S/ {{ seleccionada.total.toFixed(2) }}
+            </strong>
+
+            <small>
+              Pago dividido en {{ cantCuotas }} cuotas
+            </small>
+
+          </div>
+
           <button
-            type="submit"
+            type="button"
             class="btn-tech"
-            [disabled]="planForm.invalid ||
-              (tipoPago === 'CUOTAS' && !cantidadCuotasValida)">
-
+            [disabled]="planForm.invalid || !cantidadCuotasValida"
+            (click)="abrirModalConfirmacion(planForm)">
             Registrar plan de pagos
-
           </button>
 
         </section>
@@ -237,5 +262,208 @@
 
     </div>
 
+    <!-- MODAL 1: DETALLE DE VENTA -->
+    <div
+      class="modal-overlay"
+      *ngIf="modalDetalleAbierto"
+      (click)="cerrarModalDetalle()">
+
+      <div class="modal-content" (click)="$event.stopPropagation()">
+
+        <div class="modal-header">
+          <div>
+            <h3>Detalle de venta</h3>
+            <p>Información completa de los productos.</p>
+          </div>
+
+          <button
+            type="button"
+            class="modal-close"
+            (click)="cerrarModalDetalle()">
+            &times;
+          </button>
+        </div>
+
+        <div *ngIf="ventaSeleccionada as seleccionada">
+
+          <div class="modal-sale-info">
+            <span>Venta #{{ seleccionada.id }}</span>
+            <span>
+              Fecha: {{ seleccionada.fecha | date:'dd/MM/yyyy' }}
+            </span>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let detalle of seleccionada.detalles">
+                  <td>{{ detalle.producto }}</td>
+                  <td>{{ detalle.cantidad }}</td>
+                  <td>S/ {{ detalle.precioUnitario.toFixed(2) }}</td>
+                  <td>S/ {{ detalle.subtotal.toFixed(2) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="modal-total">
+            <span>Total de venta</span>
+            <strong>
+              S/ {{ seleccionada.total.toFixed(2) }}
+            </strong>
+          </div>
+
+        </div>
+
+        <div class="modal-actions">
+          <button
+            type="button"
+            class="btn-secondary"
+            (click)="cerrarModalDetalle()">
+            Cerrar
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODAL 2: CONFIRMACIÓN -->
+    <div
+      class="modal-overlay"
+      *ngIf="modalConfirmacionAbierto"
+      (click)="cerrarModalConfirmacion()">
+
+      <div class="modal-content" (click)="$event.stopPropagation()">
+
+        <div class="modal-header">
+          <div>
+            <h3>Confirmar plan de pagos</h3>
+            <p>Revisa los datos antes de registrar.</p>
+          </div>
+
+          <button
+            type="button"
+            class="modal-close"
+            (click)="cerrarModalConfirmacion()">
+            &times;
+          </button>
+        </div>
+
+        <div *ngIf="ventaSeleccionada as seleccionada">
+
+          <div class="confirmation-icon">?</div>
+
+          <div class="confirmation-info">
+
+            <div>
+              <span>Venta</span>
+              <strong>#{{ seleccionada.id }}</strong>
+            </div>
+
+            <div>
+              <span>Tipo de pago</span>
+              <strong>Por cuotas</strong>
+            </div>
+
+            <div>
+              <span>Cantidad de cuotas</span>
+              <strong>{{ cantCuotas }}</strong>
+            </div>
+
+            <div>
+              <span>Total de la venta</span>
+              <strong>
+                S/ {{ seleccionada.total.toFixed(2) }}
+              </strong>
+            </div>
+
+          </div>
+
+          <div class="modal-total">
+            <span>Total a registrar</span>
+            <strong>
+              S/ {{ seleccionada.total.toFixed(2) }}
+            </strong>
+          </div>
+
+          <p class="confirmation-question">
+            ¿Estás seguro de que deseas registrar este plan de pagos?
+          </p>
+
+        </div>
+
+        <div class="modal-actions">
+
+          <button
+            type="button"
+            class="btn-secondary"
+            (click)="cerrarModalConfirmacion()">
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            class="btn-tech btn-confirm"
+            (click)="confirmarRegistro()">
+            Confirmar registro
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODAL 3: REGISTRO EXITOSO -->
+    <div class="modal-overlay" *ngIf="modalExitoAbierto">
+
+      <div class="modal-content success-modal">
+
+        <div class="success-icon">✓</div>
+
+        <h3>¡Plan registrado!</h3>
+
+        <p>
+          El plan de pagos se registró correctamente.
+        </p>
+
+        <div class="success-details" *ngIf="planRegistrado">
+
+          <div>
+            <span>Número de venta</span>
+            <strong>#{{ planRegistrado.ventaId }}</strong>
+          </div>
+
+          <div>
+            <span>Modalidad</span>
+            <strong>Por cuotas</strong>
+          </div>
+
+          <div>
+            <span>Cuotas generadas</span>
+            <strong>{{ planRegistrado.cantCuotas }}</strong>
+          </div>
+
+        </div>
+
+        <button
+          type="button"
+          class="btn-tech"
+          (click)="cerrarModalExito(planForm)">
+          Finalizar
+        </button>
+
+      </div>
+    </div>
+
   </form>
+
 </div>
