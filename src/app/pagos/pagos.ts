@@ -1,8 +1,7 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { NgForm, FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule, NgForm } from '@angular/forms';
 
-// Estructura de los productos de una venta
 interface DetalleVenta {
   producto: string;
   cantidad: number;
@@ -10,137 +9,169 @@ interface DetalleVenta {
   subtotal: number;
 }
 
-// Estructura de una venta
 interface Venta {
   id: number;
   fecha: string;
-  detalles: DetalleVenta[];
   total: number;
+  detalles: DetalleVenta[];
 }
 
-// Estructura de una cuota generada
 interface Cuota {
   numeroCuota: number;
   monto: number;
-  fechaVencimiento: string;
+  fechaVencimiento: Date;
   estado: string;
 }
 
+interface PlanRegistrado {
+  ventaId: number;
+  tipoPago: string;
+  cantCuotas: number;
+}
+
 @Component({
-  imports: [CommonModule, FormsModule],
   selector: 'app-pagos',
-  styleUrl: './pagos.css',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './pagos.html',
+  styleUrl: './pagos.css'
 })
 export class Pagos {
-  // Ventas ficticias para simular el backend
+
+  // Ventas ficticias
   ventas: Venta[] = [
     {
       id: 1001,
       fecha: '2026-11-10',
+      total: 3500,
       detalles: [
         {
-          producto: 'Whey Protein',
+          producto: 'Laptop Lenovo IdeaPad',
+          cantidad: 1,
+          precioUnitario: 2800,
+          subtotal: 2800
+        },
+        {
+          producto: 'Mouse Logitech inalámbrico',
           cantidad: 2,
-          precioUnitario: 189.90,
-          subtotal: 379.80
+          precioUnitario: 150,
+          subtotal: 300
         },
         {
-          producto: 'Creatina',
+          producto: 'Audífonos HyperX',
           cantidad: 1,
-          precioUnitario: 99.90,
-          subtotal: 99.90
-        },
-        {
-          producto: 'Omega 3',
-          cantidad: 1,
-          precioUnitario: 69.90,
-          subtotal: 69.90
+          precioUnitario: 400,
+          subtotal: 400
         }
-      ],
-      total: 549.60
+      ]
     },
     {
       id: 1002,
-      fecha: '2026-11-11',
+      fecha: '2026-11-12',
+      total: 2400,
       detalles: [
         {
-          producto: 'Mass Gainer',
+          producto: 'Monitor Samsung 24 pulgadas',
           cantidad: 1,
-          precioUnitario: 159.90,
-          subtotal: 159.90
+          precioUnitario: 950,
+          subtotal: 950
         },
         {
-          producto: 'BCAA',
-          cantidad: 2,
-          precioUnitario: 119.90,
-          subtotal: 239.80
+          producto: 'Teclado mecánico Redragon',
+          cantidad: 1,
+          precioUnitario: 350,
+          subtotal: 350
+        },
+        {
+          producto: 'Tablet Samsung Galaxy',
+          cantidad: 1,
+          precioUnitario: 1100,
+          subtotal: 1100
         }
-      ],
-      total: 399.70
+      ]
     },
     {
       id: 1003,
-      fecha: '2026-11-12',
+      fecha: '2026-11-15',
+      total: 1800,
       detalles: [
         {
-          producto: 'Glutamina',
-          cantidad: 2,
-          precioUnitario: 89.90,
-          subtotal: 179.80
+          producto: 'Smartphone Xiaomi Redmi',
+          cantidad: 1,
+          precioUnitario: 1500,
+          subtotal: 1500
         },
         {
-          producto: 'Multivitamínico',
-          cantidad: 1,
-          precioUnitario: 59.90,
-          subtotal: 59.90
+          producto: 'Cargador USB-C',
+          cantidad: 2,
+          precioUnitario: 150,
+          subtotal: 300
         }
-      ],
-      total: 239.70
+      ]
     }
   ];
 
-  // Datos del formulario
-  tipoPago: string = 'CUOTAS';
+  // Datos del plan
   ventaId: number | null = null;
-  cantCuotas: number = 1;
+  cantCuotas = 3;
+
+  // Modales
+  modalDetalleAbierto = false;
+  modalConfirmacionAbierto = false;
+  modalExitoAbierto = false;
+
+  // Plan registrado
+  planRegistrado: PlanRegistrado | null = null;
+
+  // Control de selección
+  mostrarConfiguracion = false;
 
   // Obtener la venta seleccionada
   get ventaSeleccionada(): Venta | undefined {
-    return this.ventas.find(v => v.id === this.ventaId);
+    return this.ventas.find(venta => venta.id === this.ventaId);
   }
 
-  // Calcular automáticamente las cuotas
-  get cuotasGeneradas(): Cuota[] {
+  // Total de unidades de la venta
+  get totalUnidades(): number {
+    return this.ventaSeleccionada?.detalles.reduce(
+      (total, detalle) => total + detalle.cantidad,
+      0
+    ) ?? 0;
+  }
 
+  // Validar cantidad de cuotas
+  get cantidadCuotasValida(): boolean {
+    return Number.isInteger(this.cantCuotas) &&
+      this.cantCuotas >= 1 &&
+      this.cantCuotas <= 36;
+  }
+
+  // Generar cuotas automáticamente
+  get cuotasGeneradas(): Cuota[] {
     const venta = this.ventaSeleccionada;
 
-    if (!venta || this.tipoPago !== 'CUOTAS') {
+    if (!venta || !this.cantidadCuotasValida) {
       return [];
     }
 
-    if (!Number.isInteger(this.cantCuotas) ||
-        this.cantCuotas < 1 ||
-        this.cantCuotas > 36) {
-      return [];
-    }
-
-    const totalCentimos = Math.round(venta.total * 100);
-
-    const montoBase = Math.floor(totalCentimos / this.cantCuotas);
+    const montoBase = Math.floor(
+      (venta.total / this.cantCuotas) * 100
+    ) / 100;
 
     const cuotas: Cuota[] = [];
 
-    for (let i = 1; i <= this.cantCuotas; i++) {
+    let montoAcumulado = 0;
 
-      // Distribuir los céntimos restantes en la última cuota
-      const montoCentimos = i === this.cantCuotas
-        ? totalCentimos - montoBase * (this.cantCuotas - 1)
+    for (let i = 1; i <= this.cantCuotas; i++) {
+      const monto = i === this.cantCuotas
+        ? Number((venta.total - montoAcumulado).toFixed(2))
         : montoBase;
+
+      montoAcumulado += monto;
 
       cuotas.push({
         numeroCuota: i,
-        monto: montoCentimos / 100,
+        monto: Number(monto.toFixed(2)),
         fechaVencimiento: this.generarFecha(i),
         estado: 'PENDIENTE'
       });
@@ -149,73 +180,93 @@ export class Pagos {
     return cuotas;
   }
 
-  // Generar fecha de vencimiento mensual
-  generarFecha(numeroCuota: number): string {
+  // Mostrar nombres de los primeros 3 productos
+  mostrarProductos(detalles: DetalleVenta[]): string {
+    return detalles
+      .slice(0, 3)
+      .map(detalle => detalle.producto)
+      .join(', ');
+  }
 
+  // Calcular fechas de vencimiento mensuales
+  generarFecha(numeroCuota: number): Date {
     const fecha = new Date();
-
-    // Primer vencimiento: mismo día del siguiente mes
-    const dia = fecha.getDate();
-
     fecha.setDate(1);
     fecha.setMonth(fecha.getMonth() + numeroCuota);
-
-    const ultimoDia = new Date(
-      fecha.getFullYear(),
-      fecha.getMonth() + 1,
-      0
-    ).getDate();
-
-    fecha.setDate(Math.min(dia, ultimoDia));
-
-    const anio = fecha.getFullYear();
-    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-    const diaFecha = String(fecha.getDate()).padStart(2, '0');
-
-    return `${anio}-${mes}-${diaFecha}T09:00:00`;
-  }
-  
-  get cantidadCuotasValida(): boolean {
-    return Number.isInteger(this.cantCuotas) &&
-         this.cantCuotas >= 1 &&
-         this.cantCuotas <= 36 &&
-         this.cuotasGeneradas.length === this.cantCuotas;
+    return fecha;
   }
 
-  get totalUnidades(): number {
-    return this.ventaSeleccionada?.detalles.reduce(
-      (total, detalle) => total + detalle.cantidad,
-      0
-    ) ?? 0;
+  // Seleccionar una venta
+  seleccionarVenta(venta: Venta): void {
+    this.ventaId = venta.id;
+    this.cantCuotas = 3;
+    this.mostrarConfiguracion = true;
   }
 
-  // Enviar formulario
-  onSubmit(form: NgForm) {
+  // Regresar a la selección de ventas
+  volverVentas(): void {
+    this.mostrarConfiguracion = false;
+    this.ventaId = null;
+    this.cantCuotas = 3;
+  }
 
-    const venta = this.ventaSeleccionada;
+  // Abrir modal de detalle
+  abrirModalDetalle(): void {
+    this.modalDetalleAbierto = true;
+  }
 
-    if (!venta) {
+  cerrarModalDetalle(): void {
+    this.modalDetalleAbierto = false;
+  }
+
+  // Abrir modal de confirmación
+  abrirModalConfirmacion(form: NgForm): void {
+    if (!this.ventaSeleccionada || !this.cantidadCuotasValida) {
       return;
     }
 
-    const obj = {
-      tipoPago: this.tipoPago,
-      cantCuotas: this.tipoPago === 'CONTADO' ? 1 : this.cantCuotas,
-      ventaId: venta.id,
-      cuotas: this.tipoPago === 'CONTADO'
-        ? null
-        : this.cuotasGeneradas
-    };
+    if (form.invalid) {
+      form.control.markAllAsTouched();
+      return;
+    }
 
-    console.log('JSON DEL REQUEST:');
-    console.log(JSON.stringify(obj, null, 2));
-
-    // Limpiar formulario
-    form.resetForm();
-
-    this.tipoPago = 'CUOTAS';
-    this.ventaId = null;
-    this.cantCuotas = 1;
+    this.modalConfirmacionAbierto = true;
   }
 
+  cerrarModalConfirmacion(): void {
+    this.modalConfirmacionAbierto = false;
+  }
+
+  // Confirmar registro del plan
+  confirmarRegistro(): void {
+    const venta = this.ventaSeleccionada;
+
+    if (!venta || !this.cantidadCuotasValida) {
+      return;
+    }
+
+    this.planRegistrado = {
+      ventaId: venta.id,
+      tipoPago: 'CUOTAS',
+      cantCuotas: this.cantCuotas
+    };
+
+    console.log('Plan de pagos registrado:', {
+      venta,
+      tipoPago: 'CUOTAS',
+      cuotas: this.cuotasGeneradas
+    });
+
+    this.modalConfirmacionAbierto = false;
+    this.modalExitoAbierto = true;
+  }
+
+  // Cerrar modal de éxito y reiniciar
+  cerrarModalExito(form: NgForm): void {
+    this.modalExitoAbierto = false;
+    this.planRegistrado = null;
+    this.volverVentas();
+    form.resetForm();
+    this.cantCuotas = 3;
+  }
 }
