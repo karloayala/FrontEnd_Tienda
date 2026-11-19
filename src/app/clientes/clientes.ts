@@ -14,28 +14,33 @@ export class Clientes {
 
   constructor(private fb: FormBuilder) {
     this.clienteForm = this.fb.group({
-      nombres: ['', [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$')]],
-      apellidos: ['', [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$')]],
-      tipoDocumento: ['DNI', Validators.required],
-      numeroDocumento: ['', [Validators.required, Validators.pattern('^[0-9]{8,11}$')]],
-      email: ['', [Validators.required, Validators.email]],
-      telefono: ['', [Validators.required, Validators.pattern('^9[0-9]{8}$')]],
-      direccion: ['', [Validators.required, Validators.minLength(5)]],
-      tipoCliente: ['Natural', Validators.required]
+      primerNombre: ['', [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$')]],
+      segundoNombre: ['', [Validators.minLength(2), Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ]*$')]],
+      apellidoPaterno: ['', [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$')]],
+      apellidoMaterno: ['', [Validators.required, Validators.minLength(2), Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$')]],
+      documento: ['', [Validators.required, Validators.pattern('^[0-9]{8,11}$')]],
+      email: ['', [Validators.required, Validators.email]]
     });
   }
 
   registrarCliente() {
     if (this.clienteForm.valid) {
-      // Impresión en consola requerida por la consigna
-      console.log('=== NUEVO CLIENTE REGISTRADO ===');
-      console.log(this.clienteForm.value);
+      const form = this.clienteForm.value;
+
+      // Objeto adaptado exactamente a la entidad CLIENTE (nombre, documento, email)
+      const clienteModelo = {
+        nombre: [form.primerNombre, form.segundoNombre, form.apellidoPaterno, form.apellidoMaterno]
+          .filter(parte => parte && parte.trim() !== '')
+          .join(' '),
+        documento: form.documento,
+        email: form.email
+      };
+
+      console.log('=== NUEVO CLIENTE REGISTRADO (MODELO ER) ===');
+      console.log(clienteModelo);
 
       this.mensajeExito = true;
-      this.clienteForm.reset({
-        tipoDocumento: 'DNI',
-        tipoCliente: 'Natural'
-      });
+      this.clienteForm.reset();
 
       setTimeout(() => {
         this.mensajeExito = false;

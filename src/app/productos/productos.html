@@ -1,25 +1,16 @@
 <div class="card-tech">
   <div class="card-header">
-    <h2>Ingreso de Productos al Inventario</h2>
-    <p>Registra nuevos equipos y accesorios tecnológicos en el catálogo de TechNova Store</p>
+    <h2>Ingreso de Producto</h2>
+    <p>Registra un producto según el modelo del sistema TechNova Store</p>
   </div>
 
   <div class="alert-success" *ngIf="mensajeExito">
-    Producto ingresado correctamente al inventario. Revisa los datos enviados en la consola.
+    Producto ingresado correctamente. Revisa los datos enviados en la consola.
   </div>
 
   <form [formGroup]="productoForm" (ngSubmit)="registrarProducto()" class="form-grid">
 
-    <!-- 1. Código SKU -->
-    <div class="form-group">
-      <label>Código SKU *</label>
-      <input type="text" formControlName="sku" placeholder="Ej. LAP-1024" maxlength="8">
-      <span class="error-msg" *ngIf="productoForm.get('sku')?.invalid && productoForm.get('sku')?.touched">
-        Formato obligatorio: 3 letras mayúsculas, guion y 4 números (Ej. LAP-1024).
-      </span>
-    </div>
-
-    <!-- 2. Nombre del Producto -->
+    <!-- Nombre -->
     <div class="form-group">
       <label>Nombre del Producto *</label>
       <input type="text" formControlName="nombre" placeholder="Ej. Laptop Gamer ASUS ROG Strix">
@@ -28,7 +19,7 @@
       </span>
     </div>
 
-    <!-- 3. Marca -->
+    <!-- Marca -->
     <div class="form-group">
       <label>Marca *</label>
       <input type="text" formControlName="marca" placeholder="Ej. ASUS, Logitech, Samsung">
@@ -37,62 +28,36 @@
       </span>
     </div>
 
-    <!-- 4. Categoría (Select) -->
+    <!-- Precio (Double) -->
     <div class="form-group">
-      <label>Categoría *</label>
-      <select formControlName="categoria">
-        <option value="">-- Selecciona una categoría --</option>
-        <option value="Laptops y Computadoras">Laptops y Computadoras</option>
-        <option value="Periféricos y Accesorios">Periféricos y Accesorios</option>
-        <option value="Monitores y Pantallas">Monitores y Pantallas</option>
-        <option value="Componentes PC">Componentes PC</option>
-        <option value="Smartphones y Tablets">Smartphones y Tablets</option>
-      </select>
-      <span class="error-msg" *ngIf="productoForm.get('categoria')?.invalid && productoForm.get('categoria')?.touched">
-        Debes seleccionar una categoría.
-      </span>
-    </div>
-
-    <!-- 5. Precio Unitario -->
-    <div class="form-group">
-      <label>Precio Unitario (S/) *</label>
-      <input type="number" formControlName="precio" placeholder="Ej. 3499.90">
+      <label>Precio (S/) *</label>
+      <input type="number" step="0.01" formControlName="precio" placeholder="Ej. 3499.90">
       <span class="error-msg" *ngIf="productoForm.get('precio')?.invalid && productoForm.get('precio')?.touched">
-        El precio debe ser mayor a S/ 1 y menor a S/ 50,000.
+        Ingresa un precio válido mayor a 0 y menor o igual a 50,000.
       </span>
     </div>
 
-    <!-- 6. Stock Inicial -->
+    <!-- Stock (Integer) -->
     <div class="form-group">
-      <label>Stock Inicial (Unidades) *</label>
+      <label>Stock (Unidades) *</label>
       <input type="number" formControlName="stock" placeholder="Ej. 25">
       <span class="error-msg" *ngIf="productoForm.get('stock')?.invalid && productoForm.get('stock')?.touched">
-        Ingresa una cantidad válida entre 1 y 1000 unidades.
+        Ingresa una cantidad entera válida entre 1 y 1000.
       </span>
     </div>
 
-    <!-- 7. Garantía (Select) -->
-    <div class="form-group">
-      <label>Tiempo de Garantía *</label>
-      <select formControlName="garantiaMeses">
-        <option value="6">6 Meses</option>
-        <option value="12">12 Meses (1 Año)</option>
-        <option value="24">24 Meses (2 Años)</option>
-        <option value="36">36 Meses (3 Años)</option>
+    <!-- Categoría (FK categoria_id) -->
+    <div class="form-group full-width">
+      <label>Categoría *</label>
+      <select formControlName="categoria_id">
+        <option value="">-- Selecciona una categoría --</option>
+        <option *ngFor="let cat of categorias" [value]="cat.id">
+          {{ cat.nombre }}
+        </option>
       </select>
-    </div>
-
-    <!-- 8. Condición del Equipo (Radio) -->
-    <div class="form-group">
-      <label>Condición del Producto *</label>
-      <div class="radio-row">
-        <label class="radio-label">
-          <input type="radio" formControlName="condicion" value="Nuevo"> Nuevo Sellado
-        </label>
-        <label class="radio-label">
-          <input type="radio" formControlName="condicion" value="Reacondicionado"> Reacondicionado
-        </label>
-      </div>
+      <span class="error-msg" *ngIf="productoForm.get('categoria_id')?.invalid && productoForm.get('categoria_id')?.touched">
+        Debes seleccionar una categoría.
+      </span>
     </div>
 
     <!-- Botón de Envío -->

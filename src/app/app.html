@@ -1,9 +1,18 @@
 <nav class="navbar">
-  <div class="logo">TechNova <span>Store</span></div>
-  <div class="nav-links">
-    <a routerLink="/clientes" routerLinkActive="active">Registro Clientes</a>
-    <a routerLink="/productos" routerLinkActive="active">Ingreso Productos</a>
-    <a routerLink="/pagos" routerLinkActive="active">Plan de Pagos</a>
+  <div class="nav-left">
+    <!-- Botón hamburguesa visible solo en pantalla celular -->
+    <button class="hamburger-btn" (click)="toggleMenu()" aria-label="Abrir menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="logo">TechNova <span>Store</span></div>
+  </div>
+
+  <div class="nav-links" [class.open]="menuAbierto">
+    <a routerLink="/clientes" routerLinkActive="active" (click)="cerrarMenu()">Registro Clientes</a>
+    <a routerLink="/productos" routerLinkActive="active" (click)="cerrarMenu()">Ingreso Productos</a>
+    <a routerLink="/pagos" routerLinkActive="active" (click)="cerrarMenu()">Plan de Pagos</a>
   </div>
 </nav>
 

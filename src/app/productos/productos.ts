@@ -12,29 +12,44 @@ export class Productos {
   productoForm: FormGroup;
   mensajeExito: boolean = false;
 
+  // Datos ficticios de la tabla CATEGORIA (id, nombre)
+  categorias = [
+    { id: 1, nombre: 'Laptops y Computadoras' },
+    { id: 2, nombre: 'Periféricos y Accesorios' },
+    { id: 3, nombre: 'Monitores y Pantallas' },
+    { id: 4, nombre: 'Componentes PC' },
+    { id: 5, nombre: 'Smartphones y Tablets' }
+  ];
+
   constructor(private fb: FormBuilder) {
     this.productoForm = this.fb.group({
-      sku: ['', [Validators.required, Validators.pattern('^[A-Z]{3}-[0-9]{4}$')]],
       nombre: ['', [Validators.required, Validators.minLength(3)]],
       marca: ['', [Validators.required, Validators.minLength(2)]],
-      categoria: ['', Validators.required],
-      precio: ['', [Validators.required, Validators.min(1), Validators.max(50000)]],
-      stock: ['', [Validators.required, Validators.min(1), Validators.max(1000)]],
-      garantiaMeses: ['12', Validators.required],
-      condicion: ['Nuevo', Validators.required]
+      precio: ['', [Validators.required, Validators.min(0.1), Validators.max(50000)]],
+      stock: ['', [Validators.required, Validators.min(1), Validators.max(1000), Validators.pattern('^[0-9]+$')]],
+      categoria_id: ['', Validators.required]
     });
   }
 
   registrarProducto() {
     if (this.productoForm.valid) {
-      // Impresión en consola requerida por la consigna
-      console.log('=== NUEVO PRODUCTO INGRESADO ===');
-      console.log(this.productoForm.value);
+      const form = this.productoForm.value;
+
+      // Objeto adaptado exactamente a la entidad PRODUCTO (nombre, marca, precio, stock, categoria_id)
+      const productoModelo = {
+        nombre: form.nombre.trim(),
+        marca: form.marca.trim(),
+        precio: Number(form.precio),
+        stock: Number(form.stock),
+        categoria_id: Number(form.categoria_id)
+      };
+
+      console.log('=== NUEVO PRODUCTO REGISTRADO (MODELO ER) ===');
+      console.log(productoModelo);
 
       this.mensajeExito = true;
       this.productoForm.reset({
-        garantiaMeses: '12',
-        condicion: 'Nuevo'
+        categoria_id: ''
       });
 
       setTimeout(() => {

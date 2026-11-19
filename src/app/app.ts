@@ -9,4 +9,13 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class App {
   title = 'TechNova Store';
+  menuAbierto: boolean = false;
+
+  toggleMenu() {
+    this.menuAbierto = !this.menuAbierto;
+  }
+
+  cerrarMenu() {
+    this.menuAbierto = false;
+  }
 }

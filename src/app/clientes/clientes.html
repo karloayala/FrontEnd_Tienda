@@ -1,90 +1,67 @@
 <div class="card-tech">
   <div class="card-header">
     <h2>Registro de Cliente</h2>
-    <p>Ingresa los datos del cliente para asociarlo al sistema de ventas de TechNova Store</p>
+    <p>Ingresa los datos del cliente según el modelo del sistema TechNova Store</p>
   </div>
 
   <div class="alert-success" *ngIf="mensajeExito">
-    Cliente registrado correctamente.
+    Cliente registrado correctamente. Revisa los datos enviados en la consola.
   </div>
 
   <form [formGroup]="clienteForm" (ngSubmit)="registrarCliente()" class="form-grid">
 
-    <!-- Nombres -->
+    <!-- Primer Nombre -->
     <div class="form-group">
-      <label>Nombres *</label>
-      <input type="text" formControlName="nombres" placeholder="Ej. Cinthia Valeria">
-      <span class="error-msg" *ngIf="clienteForm.get('nombres')?.invalid && clienteForm.get('nombres')?.touched">
-        Ingresa un nombre válido (solo letras, mínimo 2 caracteres).
+      <label>Primer Nombre *</label>
+      <input type="text" formControlName="primerNombre" placeholder="Ej. Cinthia">
+      <span class="error-msg" *ngIf="clienteForm.get('primerNombre')?.invalid && clienteForm.get('primerNombre')?.touched">
+        Ingresa tu primer nombre válido (solo letras, mínimo 2 caracteres).
       </span>
     </div>
 
-    <!-- Apellidos -->
+    <!-- Segundo Nombre -->
     <div class="form-group">
-      <label>Apellidos *</label>
-      <input type="text" formControlName="apellidos" placeholder="Ej. Blanco Torres">
-      <span class="error-msg" *ngIf="clienteForm.get('apellidos')?.invalid && clienteForm.get('apellidos')?.touched">
-        Ingresa apellidos válidos (solo letras, mínimo 2 caracteres).
+      <label>Segundo Nombre (Opcional)</label>
+      <input type="text" formControlName="segundoNombre" placeholder="Ej. Valeria">
+      <span class="error-msg" *ngIf="clienteForm.get('segundoNombre')?.invalid && clienteForm.get('segundoNombre')?.touched">
+        Solo se permiten letras (mínimo 2 caracteres).
       </span>
     </div>
 
-    <!-- Tipo de Documento -->
+    <!-- Apellido Paterno -->
     <div class="form-group">
-      <label>Tipo de Documento *</label>
-      <select formControlName="tipoDocumento">
-        <option value="DNI">DNI (8 dígitos)</option>
-        <option value="RUC">RUC (11 dígitos)</option>
-        <option value="CE">Carnet de Extranjería</option>
-      </select>
+      <label>Apellido Paterno *</label>
+      <input type="text" formControlName="apellidoPaterno" placeholder="Ej. Blanco">
+      <span class="error-msg" *ngIf="clienteForm.get('apellidoPaterno')?.invalid && clienteForm.get('apellidoPaterno')?.touched">
+        Ingresa tu apellido paterno válido (solo letras, mínimo 2 caracteres).
+      </span>
     </div>
 
-    <!-- Número de Documento -->
+    <!-- Apellido Materno -->
     <div class="form-group">
-      <label>Número de Documento *</label>
-      <input type="text" formControlName="numeroDocumento" placeholder="Ej. 76549999" maxlength="11">
-      <span class="error-msg" *ngIf="clienteForm.get('numeroDocumento')?.invalid && clienteForm.get('numeroDocumento')?.touched">
+      <label>Apellido Materno *</label>
+      <input type="text" formControlName="apellidoMaterno" placeholder="Ej. Torres">
+      <span class="error-msg" *ngIf="clienteForm.get('apellidoMaterno')?.invalid && clienteForm.get('apellidoMaterno')?.touched">
+        Ingresa tu apellido materno válido (solo letras, mínimo 2 caracteres).
+      </span>
+    </div>
+
+    <!-- Documento -->
+    <div class="form-group">
+      <label>Documento (DNI / RUC) *</label>
+      <input type="text" formControlName="documento" placeholder="Ej. 76549999" maxlength="11">
+      <span class="error-msg" *ngIf="clienteForm.get('documento')?.invalid && clienteForm.get('documento')?.touched">
         Debe contener entre 8 y 11 dígitos numéricos.
       </span>
     </div>
 
-    <!-- Correo Electrónico -->
+    <!-- Email -->
     <div class="form-group">
       <label>Correo Electrónico *</label>
       <input type="email" formControlName="email" placeholder="cliente@correo.com">
       <span class="error-msg" *ngIf="clienteForm.get('email')?.invalid && clienteForm.get('email')?.touched">
         Ingresa un correo electrónico válido.
       </span>
-    </div>
-
-    <!-- Teléfono Celular -->
-    <div class="form-group">
-      <label>Teléfono Celular *</label>
-      <input type="text" formControlName="telefono" placeholder="Ej. 987654321" maxlength="9">
-      <span class="error-msg" *ngIf="clienteForm.get('telefono')?.invalid && clienteForm.get('telefono')?.touched">
-        Debe empezar con 9 y tener 9 dígitos.
-      </span>
-    </div>
-
-    <!-- Dirección -->
-    <div class="form-group full-width">
-      <label>Dirección de Entrega / Facturación *</label>
-      <input type="text" formControlName="direccion" placeholder="Av. Javier Prado Este 1234, San Isidro">
-      <span class="error-msg" *ngIf="clienteForm.get('direccion')?.invalid && clienteForm.get('direccion')?.touched">
-        La dirección es obligatoria (mínimo 5 caracteres).
-      </span>
-    </div>
-
-    <!-- Tipo de Cliente (Radio) -->
-    <div class="form-group full-width">
-      <label>Categoría de Cliente *</label>
-      <div class="radio-row">
-        <label class="radio-label">
-          <input type="radio" formControlName="tipoCliente" value="Natural"> Persona Natural
-        </label>
-        <label class="radio-label">
-          <input type="radio" formControlName="tipoCliente" value="Corporativo"> Cliente Corporativo / Empresa
-        </label>
-      </div>
     </div>
 
     <!-- Botón de Envío -->
