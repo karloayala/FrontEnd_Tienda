@@ -8,9 +8,8 @@
     Cliente registrado correctamente. Revisa los datos enviados en la consola.
   </div>
 
-  <form [formGroup]="clienteForm" (ngSubmit)="registrarCliente()" class="form-grid">
+  <form [formGroup]="clienteForm" (ngSubmit)="abrirModalConfirmacion()" class="form-grid">
 
-    <!-- Primer Nombre -->
     <div class="form-group">
       <label>Primer Nombre *</label>
       <input type="text" formControlName="primerNombre" placeholder="Ej. Cinthia">
@@ -19,7 +18,6 @@
       </span>
     </div>
 
-    <!-- Segundo Nombre -->
     <div class="form-group">
       <label>Segundo Nombre (Opcional)</label>
       <input type="text" formControlName="segundoNombre" placeholder="Ej. Valeria">
@@ -28,7 +26,6 @@
       </span>
     </div>
 
-    <!-- Apellido Paterno -->
     <div class="form-group">
       <label>Apellido Paterno *</label>
       <input type="text" formControlName="apellidoPaterno" placeholder="Ej. Blanco">
@@ -37,7 +34,6 @@
       </span>
     </div>
 
-    <!-- Apellido Materno -->
     <div class="form-group">
       <label>Apellido Materno *</label>
       <input type="text" formControlName="apellidoMaterno" placeholder="Ej. Torres">
@@ -46,7 +42,6 @@
       </span>
     </div>
 
-    <!-- Documento -->
     <div class="form-group">
       <label>Documento (DNI / RUC) *</label>
       <input type="text" formControlName="documento" placeholder="Ej. 76549999" maxlength="11">
@@ -55,7 +50,6 @@
       </span>
     </div>
 
-    <!-- Email -->
     <div class="form-group">
       <label>Correo Electrónico *</label>
       <input type="email" formControlName="email" placeholder="cliente@correo.com">
@@ -64,12 +58,57 @@
       </span>
     </div>
 
-    <!-- Botón de Envío -->
     <div class="form-group full-width">
       <button type="submit" [disabled]="clienteForm.invalid" class="btn-tech">
-        Guardar Cliente
+        Verificar y Guardar Cliente
       </button>
     </div>
 
   </form>
+</div>
+
+<!-- VENTANA MODAL DE CONFIRMACIÓN DE CLIENTE -->
+<div class="modal-backdrop" *ngIf="modalConfirmacionAbierto" (click)="cerrarModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Confirmar Registro de Cliente</h3>
+      <button type="button" class="close-btn" (click)="cerrarModal()" aria-label="Cerrar">&times;</button>
+    </div>
+
+    <div class="modal-body" *ngIf="clienteParaConfirmar">
+      <p class="modal-subtitle">Verifica que los datos consolidados coincidan con el documento de identidad:</p>
+
+      <div class="resumen-grid">
+        <div class="resumen-item">
+          <span class="resumen-label">Nombre Completo (Entidad)</span>
+          <span class="resumen-valor">{{ clienteParaConfirmar.nombre }}</span>
+        </div>
+
+        <div class="resumen-item">
+          <span class="resumen-label">Documento de Identidad</span>
+          <span class="resumen-valor">{{ clienteParaConfirmar.documento }}</span>
+        </div>
+
+        <div class="resumen-item">
+          <span class="resumen-label">Correo Electrónico</span>
+          <span class="resumen-valor">{{ clienteParaConfirmar.email }}</span>
+        </div>
+
+        <div class="resumen-item">
+          <span class="resumen-label">Segmento Evaluado</span>
+          <span class="badge-segmento">{{ clienteParaConfirmar.segmento }}</span>
+        </div>
+
+        <div class="resumen-item full">
+          <span class="resumen-label">Línea de Crédito Referencial (TechNova)</span>
+          <span class="resumen-valor destacado">S/ {{ clienteParaConfirmar.lineaCreditoAsignada | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary" (click)="cerrarModal()">Corregir Datos</button>
+      <button type="button" class="btn-tech btn-modal-confirm" (click)="confirmarRegistroCliente()">Confirmar Registro</button>
+    </div>
+  </div>
 </div>

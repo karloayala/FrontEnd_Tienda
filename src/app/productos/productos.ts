@@ -2,6 +2,17 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
+export interface ProductoPreview {
+  nombre: string;
+  marca: string;
+  precio: number;
+  stock: number;
+  categoria_id: number;
+  categoriaNombre: string;
+  valorTotalLote: number;
+  estadoStock: 'Stock Crítico' | 'Stock Moderado' | 'Stock Óptimo';
+}
+
 @Component({
   selector: 'app-productos',
   imports: [CommonModule, ReactiveFormsModule],
@@ -11,8 +22,9 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 export class Productos {
   productoForm: FormGroup;
   mensajeExito: boolean = false;
+  modalProductoAbierto: boolean = false;
+  productoParaConfirmar: ProductoPreview | null = null;
 
-  // Datos ficticios de la tabla CATEGORIA (id, nombre)
   categorias = [
     { id: 1, nombre: 'Laptops y Computadoras' },
     { id: 2, nombre: 'Periféricos y Accesorios' },
@@ -31,32 +43,65 @@ export class Productos {
     });
   }
 
-  registrarProducto() {
+  abrirModalProducto() {
     if (this.productoForm.valid) {
       const form = this.productoForm.value;
+      const precioNum = Number(form.precio);
+      const stockNum = Number(form.stock);
+      const catId = Number(form.categoria_id);
+      const categoriaEncontrada = this.categorias.find(c => c.id === catId);
 
-      // Objeto adaptado exactamente a la entidad PRODUCTO (nombre, marca, precio, stock, categoria_id)
-      const productoModelo = {
+      let estado: 'Stock Crítico' | 'Stock Moderado' | 'Stock Óptimo' = 'Stock Óptimo';
+      if (stockNum <= 5) {
+        estado = 'Stock Crítico';
+      } else if (stockNum <= 15) {
+        estado = 'Stock Moderado';
+      }
+
+      this.productoParaConfirmar = {
         nombre: form.nombre.trim(),
         marca: form.marca.trim(),
-        precio: Number(form.precio),
-        stock: Number(form.stock),
-        categoria_id: Number(form.categoria_id)
+        precio: precioNum,
+        stock: stockNum,
+        categoria_id: catId,
+        categoriaNombre: categoriaEncontrada ? categoriaEncontrada.nombre : 'General',
+        valorTotalLote: precioNum * stockNum,
+        estadoStock: estado
       };
 
-      console.log('=== NUEVO PRODUCTO REGISTRADO (MODELO ER) ===');
-      console.log(productoModelo);
-
-      this.mensajeExito = true;
-      this.productoForm.reset({
-        categoria_id: ''
-      });
-
-      setTimeout(() => {
-        this.mensajeExito = false;
-      }, 4000);
+      this.modalProductoAbierto = true;
     } else {
       this.productoForm.markAllAsTouched();
     }
+  }
+
+  cerrarModalProducto() {
+    this.modalProductoAbierto = false;
+  }
+
+  confirmarRegistroProducto() {
+    if (!this.productoParaConfirmar) return;
+
+    const productoModelo = {
+      nombre: this.productoParaConfirmar.nombre,
+      marca: this.productoParaConfirmar.marca,
+      precio: this.productoParaConfirmar.precio,
+      stock: this.productoParaConfirmar.stock,
+      categoria_id: this.productoParaConfirmar.categoria_id
+    };
+
+    console.log('=== NUEVO PRODUCTO REGISTRADO (MODELO ER) ===');
+    console.log(productoModelo);
+
+    this.modalProductoAbierto = false;
+    this.productoParaConfirmar = null;
+    this.mensajeExito = true;
+    this.productoForm.reset({
+      categoria_id: ''
+    });
+
+    setTimeout(() => {
+      this.mensajeExito = false;
+    }, 4000);
   }
 }

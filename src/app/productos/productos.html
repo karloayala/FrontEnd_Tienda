@@ -8,9 +8,8 @@
     Producto ingresado correctamente. Revisa los datos enviados en la consola.
   </div>
 
-  <form [formGroup]="productoForm" (ngSubmit)="registrarProducto()" class="form-grid">
+  <form [formGroup]="productoForm" (ngSubmit)="abrirModalProducto()" class="form-grid">
 
-    <!-- Nombre -->
     <div class="form-group">
       <label>Nombre del Producto *</label>
       <input type="text" formControlName="nombre" placeholder="Ej. Laptop Gamer ASUS ROG Strix">
@@ -19,7 +18,6 @@
       </span>
     </div>
 
-    <!-- Marca -->
     <div class="form-group">
       <label>Marca *</label>
       <input type="text" formControlName="marca" placeholder="Ej. ASUS, Logitech, Samsung">
@@ -28,7 +26,6 @@
       </span>
     </div>
 
-    <!-- Precio (Double) -->
     <div class="form-group">
       <label>Precio (S/) *</label>
       <input type="number" step="0.01" formControlName="precio" placeholder="Ej. 3499.90">
@@ -37,7 +34,6 @@
       </span>
     </div>
 
-    <!-- Stock (Integer) -->
     <div class="form-group">
       <label>Stock (Unidades) *</label>
       <input type="number" formControlName="stock" placeholder="Ej. 25">
@@ -46,7 +42,6 @@
       </span>
     </div>
 
-    <!-- Categoría (FK categoria_id) -->
     <div class="form-group full-width">
       <label>Categoría *</label>
       <select formControlName="categoria_id">
@@ -60,12 +55,59 @@
       </span>
     </div>
 
-    <!-- Botón de Envío -->
     <div class="form-group full-width">
       <button type="submit" [disabled]="productoForm.invalid" class="btn-tech">
-        Registrar Producto
+        Previsualizar y Registrar Producto
       </button>
     </div>
 
   </form>
+</div>
+
+<div class="modal-backdrop" *ngIf="modalProductoAbierto" (click)="cerrarModalProducto()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Vista Previa de Inventario</h3>
+      <button type="button" class="close-btn" (click)="cerrarModalProducto()" aria-label="Cerrar">&times;</button>
+    </div>
+
+    <div class="modal-body" *ngIf="productoParaConfirmar">
+      <p class="modal-subtitle">Verifica la ficha técnica y el cálculo de valorización antes de ingresar al almacén:</p>
+
+      <div class="ficha-producto">
+        <div class="ficha-top">
+          <span class="badge-categoria">{{ productoParaConfirmar.categoriaNombre }}</span>
+          <span class="badge-stock"
+                [class.critico]="productoParaConfirmar.estadoStock === 'Stock Crítico'"
+                [class.moderado]="productoParaConfirmar.estadoStock === 'Stock Moderado'"
+                [class.optimo]="productoParaConfirmar.estadoStock === 'Stock Óptimo'">
+            {{ productoParaConfirmar.estadoStock }}
+          </span>
+        </div>
+
+        <h4 class="ficha-titulo">{{ productoParaConfirmar.nombre }}</h4>
+        <p class="ficha-marca">Marca: <strong>{{ productoParaConfirmar.marca }}</strong></p>
+
+        <div class="metricas-grid">
+          <div class="metrica-box">
+            <span class="metrica-label">Precio Unitario</span>
+            <span class="metrica-valor">S/ {{ productoParaConfirmar.precio | number:'1.2-2' }}</span>
+          </div>
+          <div class="metrica-box">
+            <span class="metrica-label">Unidades Ingresadas</span>
+            <span class="metrica-valor">{{ productoParaConfirmar.stock }} unid.</span>
+          </div>
+          <div class="metrica-box total">
+            <span class="metrica-label">Valorización Total del Lote</span>
+            <span class="metrica-valor destacado">S/ {{ productoParaConfirmar.valorTotalLote | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-secondary" (click)="cerrarModalProducto()">Editar Ficha</button>
+      <button type="button" class="btn-tech btn-modal-confirm" (click)="confirmarRegistroProducto()">Confirmar Ingreso</button>
+    </div>
+  </div>
 </div>
