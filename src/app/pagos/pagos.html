@@ -4,7 +4,6 @@
   <div class="card-header">
     <div>
       <h2>Plan de Pagos</h2>
-      <p>Selecciona una venta y configura su plan de cuotas.</p>
     </div>
   </div>
 
@@ -13,7 +12,6 @@
 
     <div class="selection-heading">
       <h3>Seleccionar venta</h3>
-      <p>Elige una venta para configurar su plan de pagos.</p>
     </div>
 
     <div class="ventas-grid">
@@ -35,13 +33,7 @@
             Fecha: {{ item.fecha | date:'dd/MM/yyyy' }}
           </p>
 
-          <div class="venta-productos">
-            <strong>{{ item.detalles.length }} productos diferentes</strong>
-            <small>
-              {{ mostrarProductos(item.detalles) }}
-              <span *ngIf="item.detalles.length > 3"> y más...</span>
-            </small>
-          </div>
+          
         </div>
 
         <div class="venta-card-footer">
@@ -79,24 +71,12 @@
         <section class="panel">
 
           <div class="section-header">
-            <h3>Configuración del pago</h3>
+            <h3>Cantidad de Cuotas</h3>
             <span class="badge-count">Paso 1</span>
           </div>
 
-          <div class="payment-type-fixed">
-            <div class="payment-type-icon">▤</div>
-
-            <div>
-              <strong>Pago por cuotas</strong>
-              <p>La venta se dividirá en pagos mensuales.</p>
-            </div>
-
-            <span class="fixed-label">Seleccionado</span>
-          </div>
-
+          
           <div class="form-group">
-            <label for="cantCuotas">Cantidad de cuotas</label>
-
             <input
               id="cantCuotas"
               type="number"
@@ -234,20 +214,7 @@
           </div>
 
           <!-- RESUMEN DEL PLAN -->
-          <div class="payment-summary">
-
-            <span>Total del plan de pagos</span>
-
-            <strong>
-              S/ {{ seleccionada.total.toFixed(2) }}
-            </strong>
-
-            <small>
-              Pago dividido en {{ cantCuotas }} cuotas
-            </small>
-
-          </div>
-
+          
           <button
             type="button"
             class="btn-tech"
@@ -359,8 +326,6 @@
         </div>
 
         <div *ngIf="ventaSeleccionada as seleccionada">
-
-          <div class="confirmation-icon">?</div>
 
           <div class="confirmation-info">
 

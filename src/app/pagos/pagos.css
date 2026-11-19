@@ -24,12 +24,6 @@
   font-size: 1.6rem;
 }
 
-.card-header p {
-  margin: 0.4rem 0 0;
-  color: #64748b;
-  font-size: 0.95rem;
-}
-
 /* SELECCIÓN DE VENTAS */
 
 .selection-heading {
@@ -39,12 +33,6 @@
 .selection-heading h3 {
   color: #0f172a;
   margin: 0 0 0.4rem;
-}
-
-.selection-heading p {
-  color: #64748b;
-  font-size: 0.9rem;
-  margin: 0;
 }
 
 .ventas-grid {
@@ -97,26 +85,6 @@
   color: #64748b;
   font-size: 0.85rem;
   margin: 0.4rem 0 1rem;
-}
-
-.venta-productos {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  padding: 0.8rem;
-  background: #f8fafc;
-  border-radius: 8px;
-}
-
-.venta-productos strong {
-  color: #334155;
-  font-size: 0.85rem;
-}
-
-.venta-productos small {
-  color: #64748b;
-  font-size: 0.78rem;
-  line-height: 1.4;
 }
 
 .venta-card-footer {
@@ -240,40 +208,6 @@
 
 /* MODALIDAD FIJA */
 
-.payment-type-fixed {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 9px;
-  padding: 1rem;
-  margin-bottom: 1.2rem;
-}
-
-.payment-type-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  flex-shrink: 0;
-  background: #dbeafe;
-  color: #0369a1;
-  border-radius: 9px;
-  font-size: 1.3rem;
-}
-
-.payment-type-fixed strong {
-  color: #0c4a6e;
-  font-size: 0.95rem;
-}
-
-.payment-type-fixed p {
-  color: #64748b;
-  font-size: 0.8rem;
-  margin: 0.25rem 0 0;
-}
 
 .fixed-label {
   margin-left: auto;
@@ -402,26 +336,6 @@ input:focus {
 }
 
 /* RESUMEN DEL PLAN */
-
-.payment-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 9px;
-  padding: 1rem;
-  margin-top: 1.3rem;
-  color: #0c4a6e;
-}
-
-.payment-summary strong {
-  font-size: 1.5rem;
-}
-
-.payment-summary small {
-  color: #0369a1;
-}
 
 /* TABLA DE CUOTAS */
 
@@ -638,19 +552,6 @@ td {
   font-size: 1.2rem;
 }
 
-.confirmation-icon {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto 1.2rem;
-  background: #e0f2fe;
-  color: #0284c7;
-  font-size: 1.5rem;
-  font-weight: 700;
-}
 
 .confirmation-info {
   display: grid;
