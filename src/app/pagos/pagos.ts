@@ -1,6 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
+import { PlanPagoService } from '../services/plan-pago';
+
+interface PlanRegistrado {
+  ventaId: number;
+  tipoPago: string;
+  cantCuotas: number;
+  alContado: boolean;
+}
 
 interface DetalleVenta {
   producto: string;
@@ -38,10 +46,14 @@ interface PlanRegistrado {
 })
 export class Pagos {
 
+  private planPagoService = inject(PlanPagoService);
+
+guardando = false;
+errorMensaje: string | null = null;
   // Ventas ficticias
   ventas: Venta[] = [
     {
-      id: 1001,
+      id: 1,
       fecha: '2026-11-10',
       total: 3500,
       detalles: [
@@ -66,7 +78,7 @@ export class Pagos {
       ]
     },
     {
-      id: 1002,
+      id: 2,
       fecha: '2026-11-12',
       total: 2400,
       detalles: [
@@ -91,7 +103,7 @@ export class Pagos {
       ]
     },
     {
-      id: 1003,
+      id: 3,
       fecha: '2026-11-15',
       total: 1800,
       detalles: [
@@ -146,39 +158,50 @@ export class Pagos {
       this.cantCuotas <= 36;
   }
 
-  // Generar cuotas automáticamente
-  get cuotasGeneradas(): Cuota[] {
-    const venta = this.ventaSeleccionada;
+  // Generar cuotas igual que el backend (en céntimos)
+get cuotasGeneradas(): Cuota[] {
+  const venta = this.ventaSeleccionada;
 
-    if (!venta || !this.cantidadCuotasValida) {
-      return [];
-    }
-
-    const montoBase = Math.floor(
-      (venta.total / this.cantCuotas) * 100
-    ) / 100;
-
-    const cuotas: Cuota[] = [];
-
-    let montoAcumulado = 0;
-
-    for (let i = 1; i <= this.cantCuotas; i++) {
-      const monto = i === this.cantCuotas
-        ? Number((venta.total - montoAcumulado).toFixed(2))
-        : montoBase;
-
-      montoAcumulado += monto;
-
-      cuotas.push({
-        numeroCuota: i,
-        monto: Number(monto.toFixed(2)),
-        fechaVencimiento: this.generarFecha(i),
-        estado: 'PENDIENTE'
-      });
-    }
-
-    return cuotas;
+  if (!venta || !this.cantidadCuotasValida) {
+    return [];
   }
+
+  const totalCentimos = Math.round(venta.total * 100);
+  const base = Math.floor(totalCentimos / this.cantCuotas);
+  const extra = totalCentimos % this.cantCuotas;
+
+  const cuotas: Cuota[] = [];
+
+  for (let i = 1; i <= this.cantCuotas; i++) {
+    const centimos = base + (i <= extra ? 1 : 0);
+
+    cuotas.push({
+      numeroCuota: i,
+      monto: centimos / 100,
+      fechaVencimiento: this.generarFecha(i),
+      estado: 'PENDIENTE'
+    });
+  }
+
+  return cuotas;
+}
+
+// Fecha de la venta + N meses (igual que plusMonths de Java)
+generarFecha(numeroCuota: number): Date {
+  const venta = this.ventaSeleccionada;
+  const fecha = venta ? new Date(venta.fecha) : new Date();
+  const dia = fecha.getDate();
+
+  fecha.setDate(1);
+  fecha.setMonth(fecha.getMonth() + numeroCuota);
+
+  // Java recorta al último día del mes (31 ene + 1 mes = 28 feb)
+  const ultimoDia = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0).getDate();
+  fecha.setDate(Math.min(dia, ultimoDia));
+
+  return fecha;
+}
+
 
   // Mostrar nombres de los primeros 3 productos
   mostrarProductos(detalles: DetalleVenta[]): string {
@@ -188,13 +211,6 @@ export class Pagos {
       .join(', ');
   }
 
-  // Calcular fechas de vencimiento mensuales
-  generarFecha(numeroCuota: number): Date {
-    const fecha = new Date();
-    fecha.setDate(1);
-    fecha.setMonth(fecha.getMonth() + numeroCuota);
-    return fecha;
-  }
 
   // Seleccionar una venta
   seleccionarVenta(venta: Venta): void {
@@ -233,40 +249,45 @@ export class Pagos {
     this.modalConfirmacionAbierto = true;
   }
 
-  cerrarModalConfirmacion(): void {
-    this.modalConfirmacionAbierto = false;
-  }
+ cerrarModalConfirmacion(): void {
+  this.modalConfirmacionAbierto = false;
+  this.errorMensaje = null;
+}
 
   // Confirmar registro del plan
-  confirmarRegistro(): void {
-    const venta = this.ventaSeleccionada;
+ confirmarRegistro(): void {
+  const venta = this.ventaSeleccionada;
+  if (!venta || !this.cantidadCuotasValida || this.guardando) {
+    return;
+  }
 
-    if (!venta || !this.cantidadCuotasValida) {
-      return;
+    const cantCuotas = this.cantCuotas;
+  const request = {
+    tipoPago: cantCuotas === 1 ? 'CONTADO' : 'CUOTAS',
+    cantCuotas,
+    ventaId: venta.id
+  };
+
+  this.guardando = true;
+  this.errorMensaje = null;
+
+  this.planPagoService.registrar(request).subscribe({
+    next: (res) => {
+      this.planRegistrado = {
+        ventaId: venta.id,
+        tipoPago: request.tipoPago,
+        cantCuotas,
+        alContado: res.status === 204   // 204 = venta pasó a PAGADO_AL_CONTADO
+      };
+      this.guardando = false;
+      this.modalConfirmacionAbierto = false;
+      this.modalExitoAbierto = true;
+    },
+    error: (err) => {
+      this.guardando = false;
+      this.errorMensaje =
+        err.error?.mensaje ?? err.error?.message ?? 'No se pudo registrar. Intenta nuevamente.';
     }
-
-    this.planRegistrado = {
-      ventaId: venta.id,
-      tipoPago: 'CUOTAS',
-      cantCuotas: this.cantCuotas
-    };
-
-    console.log('Plan de pagos registrado:', {
-      venta,
-      tipoPago: 'CUOTAS',
-      cuotas: this.cuotasGeneradas
-    });
-
-    this.modalConfirmacionAbierto = false;
-    this.modalExitoAbierto = true;
-  }
-
-  // Cerrar modal de éxito y reiniciar
-  cerrarModalExito(form: NgForm): void {
-    this.modalExitoAbierto = false;
-    this.planRegistrado = null;
-    this.volverVentas();
-    form.resetForm();
-    this.cantCuotas = 3;
-  }
+  });
+}
 }

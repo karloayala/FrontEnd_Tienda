@@ -336,7 +336,7 @@
 
             <div>
               <span>Tipo de pago</span>
-              <strong>Por cuotas</strong>
+              <strong>{{ cantCuotas === 1 ? 'Al contado' : 'Por cuotas' }}</strong>
             </div>
 
             <div>
@@ -363,6 +363,14 @@
           <p class="confirmation-question">
             ¿Estás seguro de que deseas registrar este plan de pagos?
           </p>
+
+          <p class="error-msg" *ngIf="errorMensaje">{{ errorMensaje }}</p>
+
+            <button type="button" class="btn-tech btn-confirm"
+                     [disabled]="guardando"
+                      (click)="confirmarRegistro()">
+                 {{ guardando ? 'Registrando...' : 'Confirmar registro' }}
+            </button>
 
         </div>
 
@@ -394,29 +402,28 @@
 
         <div class="success-icon">✓</div>
 
-        <h3>¡Plan registrado!</h3>
+        <!-- 👇 REEMPLAZADO desde aquí -->
+        <h3>{{ planRegistrado?.alContado ? '¡Venta pagada al contado!' : '¡Plan registrado!' }}</h3>
 
         <p>
-          El plan de pagos se registró correctamente.
+          {{ planRegistrado?.alContado
+              ? 'La venta se registró como pagada al contado.'
+              : 'El plan de pagos se registró correctamente.' }}
         </p>
 
         <div class="success-details" *ngIf="planRegistrado">
-
           <div>
             <span>Número de venta</span>
             <strong>#{{ planRegistrado.ventaId }}</strong>
           </div>
-
           <div>
             <span>Modalidad</span>
-            <strong>Por cuotas</strong>
+            <strong>{{ planRegistrado.alContado ? 'Al contado' : 'Por cuotas' }}</strong>
           </div>
-
-          <div>
+          <div *ngIf="!planRegistrado.alContado">
             <span>Cuotas generadas</span>
             <strong>{{ planRegistrado.cantCuotas }}</strong>
           </div>
-
         </div>
 
         <button
