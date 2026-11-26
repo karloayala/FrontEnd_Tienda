@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { PlanPagoService } from '../services/plan-pago'; // ajusta la ruta si hace falta
+import { PlanPagoService } from '../../services/plan-pago'; // ajusta la ruta si hace falta
 
 interface DetalleVenta {
   producto: string;
