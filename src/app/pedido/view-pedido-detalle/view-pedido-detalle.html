@@ -1,0 +1,135 @@
+
+<div class="modal-overlay" (click)="cerrarModal()">
+
+  <div class="modal-container" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div>
+        <h2>Detalle del pedido</h2>
+        <p *ngIf="pedido">Pedido #{{ pedido.id }}</p>
+      </div>
+
+      <button class="btn-cerrar" (click)="cerrarModal()">
+        &times;
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="pedido">
+
+      <!-- INFORMACIÓN GENERAL -->
+      <section class="seccion-detalle">
+
+        <h3>Información del pedido</h3>
+
+        <div class="datos-grid">
+          <div>
+            <span>Fecha</span>
+            <strong>{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</strong>
+          </div>
+
+          <div>
+            <span>Estado</span>
+            <strong>{{ pedido.estado }}</strong>
+          </div>
+
+          <div>
+            <span>ID del pedido</span>
+            <strong>#{{ pedido.id }}</strong>
+          </div>
+
+          <div>
+            <span>Venta asociada</span>
+            <strong>{{ pedido.ventaId ?? 'Sin venta' }}</strong>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- INFORMACIÓN DEL CLIENTE -->
+      <section class="seccion-detalle">
+
+        <h3>Información del cliente</h3>
+
+        <div class="datos-grid">
+          <div>
+            <span>Cliente</span>
+            <strong>{{ pedido.clienteNombre }}</strong>
+          </div>
+
+          <div>
+            <span>Documento</span>
+            <strong>{{ pedido.clienteDocumento }}</strong>
+          </div>
+
+          <div>
+            <span>ID del cliente</span>
+            <strong>{{ pedido.clienteId }}</strong>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- PRODUCTOS -->
+      <section class="seccion-detalle">
+
+        <h3>Productos del pedido</h3>
+
+        <div class="productos-tabla">
+
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let detalle of pedido.detalles">
+                <td>
+                  <strong>{{ detalle.productoNombre }}</strong>
+                  <small>ID: {{ detalle.productoId }}</small>
+                </td>
+
+                <td>{{ detalle.cantidad }}</td>
+
+                <td>
+                  {{ detalle.precioUnitario | currency:'PEN':'symbol':'1.2-2' }}
+                </td>
+
+                <td>
+                  {{ detalle.subtotal | currency:'PEN':'symbol':'1.2-2' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div *ngIf="pedido.detalles.length === 0" class="sin-productos">
+            Este pedido no tiene detalles registrados.
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- TOTAL -->
+      <div class="total-container">
+        <span>Total del pedido</span>
+        <strong>
+          {{ pedido.total | currency:'PEN':'symbol':'1.2-2' }}
+        </strong>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cerrar-footer" (click)="cerrarModal()">
+        Cerrar
+      </button>
+    </div>
+
+  </div>
+
+</div>

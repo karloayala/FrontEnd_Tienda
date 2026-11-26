@@ -4,6 +4,7 @@ import { Productos } from './productos/productos';
 import { Pagos } from './plan-pago/pagos/pagos';
 import { ViewPlanPago } from './plan-pago/view-plan-pago/view-plan-pago';
 import { ViewPlanPagoNuevo } from './plan-pago/view-plan-pago-nuevo/view-plan-pago-nuevo';
+import { ViewPedidos } from './pedido/view-pedidos/view-pedidos';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'clientes', pathMatch: 'full' },
@@ -22,6 +23,12 @@ export const routes: Routes = [
     path: 'planes-pago/nuevo',
     component: ViewPlanPagoNuevo,
     title: 'Registrar plan de pago'
+  },
+
+  {
+    path: 'pedidos',
+    component: ViewPedidos,
+    title: 'Gestión de pedidos'
   }
 
 ];

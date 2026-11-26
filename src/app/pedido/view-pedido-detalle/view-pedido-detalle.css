@@ -1,0 +1,161 @@
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.modal-container {
+  background: white;
+  width: 100%;
+  max-width: 850px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 25px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  margin: 0 0 5px;
+}
+
+.modal-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.btn-cerrar {
+  background: transparent;
+  font-size: 27px;
+  color: #6b7280;
+  padding: 2px 8px;
+}
+
+.modal-body {
+  padding: 25px;
+}
+
+.seccion-detalle {
+  margin-bottom: 25px;
+}
+
+.seccion-detalle h3 {
+  font-size: 15px;
+  margin: 0 0 15px;
+}
+
+.datos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  background: #f9fafb;
+  border: 1px solid #edf0f2;
+  padding: 18px;
+  border-radius: 8px;
+}
+
+.datos-grid div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.datos-grid span {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.datos-grid strong {
+  font-size: 14px;
+}
+
+.productos-tabla {
+  overflow-x: auto;
+}
+
+.productos-tabla table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+.productos-tabla th {
+  background: #f9fafb;
+  text-align: left;
+  padding: 12px;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.productos-tabla td {
+  padding: 13px 12px;
+  border-bottom: 1px solid #edf0f2;
+  font-size: 13px;
+}
+
+.productos-tabla td small {
+  display: block;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.total-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+  padding: 18px;
+  border-radius: 8px;
+}
+
+.total-container span {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.total-container strong {
+  font-size: 21px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 18px 25px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-cerrar-footer {
+  background: #252a34;
+  color: white;
+}
+
+.sin-productos {
+  padding: 20px;
+  color: #6b7280;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .datos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-body {
+    padding: 16px;
+  }
+}

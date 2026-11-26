@@ -1,7 +1,6 @@
 
 export interface PlanPagoResponse {
   id: number;
-  tipoPago: string;
   cantCuotas: number;
   ventaId: number;
   cuotas: CuotaResponse[];

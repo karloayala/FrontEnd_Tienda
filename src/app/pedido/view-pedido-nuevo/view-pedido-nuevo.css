@@ -1,0 +1,133 @@
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.modal-container {
+  width: 100%;
+  max-width: 480px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 22px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h2 {
+  margin: 0 0 6px;
+  font-size: 19px;
+}
+
+.modal-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.btn-cerrar {
+  background: transparent;
+  color: #6b7280;
+  font-size: 26px;
+  padding: 0 8px;
+}
+
+.modal-body {
+  padding: 22px;
+}
+
+.informacion {
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 22px;
+  color: #1e40af;
+}
+
+.informacion strong {
+  font-size: 13px;
+}
+
+.informacion p {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.campo input {
+  height: 42px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  padding: 0 12px;
+  outline: none;
+}
+
+.campo input:focus {
+  border-color: #64748b;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 17px 22px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.modal-footer button {
+  padding: 10px 15px;
+  border-radius: 7px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-cancelar {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.btn-crear {
+  background: #252a34;
+  color: white;
+}
+
+.modal-footer button:disabled,
+.btn-cerrar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mensaje-error {
+  color: #b91c1c;
+  background: #fee2e2;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-top: 12px;
+}

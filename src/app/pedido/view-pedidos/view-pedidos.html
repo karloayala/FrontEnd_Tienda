@@ -1,0 +1,169 @@
+<div class="pedidos-container">
+
+  <!-- ENCABEZADO -->
+  <div class="page-header">
+    <div>
+      <h1>Gestión de pedidos</h1>
+      <p>Administra y consulta los pedidos de tus clientes.</p>
+    </div>
+
+    <button class="btn-primary" (click)="abrirModalCrear()">
+      + Crear pedido
+    </button>
+  </div>
+
+  <!-- RESUMEN -->
+  <div class="resumen-grid">
+
+    <div class="resumen-card">
+      <span>Total de pedidos</span>
+      <strong>{{ pedidos.length }}</strong>
+    </div>
+
+    <div class="resumen-card">
+      <span>Pendientes</span>
+      <strong>{{ totalPendientes }}</strong>
+    </div>
+
+    <div class="resumen-card">
+      <span>Pagados</span>
+      <strong>{{ totalPagados }}</strong>
+    </div>
+
+  </div>
+
+  <!-- MENSAJES -->
+  <div class="mensaje-exito" *ngIf="mensajeExito">
+    {{ mensajeExito }}
+  </div>
+
+  <div class="mensaje-error" *ngIf="mensajeError">
+    {{ mensajeError }}
+  </div>
+
+  <!-- BÚSQUEDA -->
+  <div class="filtros-container">
+
+    <div class="campo-busqueda">
+      <label>Buscar por</label>
+
+      <select [(ngModel)]="tipoBusqueda">
+        <option value="todos">Todos los pedidos</option>
+        <option value="id">ID del pedido</option>
+        <option value="documento">Documento del cliente</option>
+        <option value="estado">Estado</option>
+        <option value="cliente">ID del cliente</option>
+      </select>
+    </div>
+
+    <div class="campo-busqueda campo-valor">
+      <label>Valor de búsqueda</label>
+
+      <input
+        type="text"
+        [(ngModel)]="valorBusqueda"
+        placeholder="Ingresa un valor..."
+        (keyup.enter)="buscarPedidos()"
+        [disabled]="tipoBusqueda === 'todos'"
+      />
+    </div>
+
+    <button class="btn-primary" (click)="buscarPedidos()" [disabled]="cargando">
+      Buscar
+    </button>
+
+    <button class="btn-secondary" (click)="limpiarBusqueda()">
+      Limpiar
+    </button>
+
+  </div>
+
+  <!-- TABLA DE PEDIDOS -->
+  <div class="tabla-container">
+
+    <div class="tabla-header">
+      <h2>Listado de pedidos</h2>
+      <span>{{ pedidos.length }} registros</span>
+    </div>
+
+    <div *ngIf="cargando" class="estado-carga">
+      Cargando pedidos...
+    </div>
+
+    <table *ngIf="!cargando && pedidos.length > 0">
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Fecha</th>
+          <th>Cliente</th>
+          <th>Documento</th>
+          <th>Total</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let pedido of pedidos">
+
+          <td>#{{ pedido.id }}</td>
+
+          <td>{{ formatearFecha(pedido.fecha) }}</td>
+
+          <td>{{ pedido.clienteNombre }}</td>
+
+          <td>{{ pedido.clienteDocumento }}</td>
+
+          <td class="total">
+            {{ pedido.total | currency:'PEN':'symbol':'1.2-2' }}
+          </td>
+
+          <td>
+            <span
+              class="estado-badge"
+              [ngClass]="obtenerClaseEstado(pedido.estado)"
+            >
+              {{ pedido.estado }}
+            </span>
+          </td>
+
+          <td>
+            <button
+              class="btn-detalle"
+              (click)="verDetalle(pedido.id)"
+            >
+              Ver detalle
+            </button>
+          </td>
+
+        </tr>
+      </tbody>
+
+    </table>
+
+    <div
+      *ngIf="!cargando && pedidos.length === 0"
+      class="sin-resultados"
+    >
+      No se encontraron pedidos.
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MODAL DETALLE -->
+<app-view-pedido-detalle
+  *ngIf="mostrarModalDetalle"
+  [pedido]="pedidoSeleccionado"
+  (cerrar)="cerrarModalDetalle()"
+></app-view-pedido-detalle>
+
+<!-- MODAL CREAR -->
+<app-view-pedido-nuevo
+  *ngIf="mostrarModalCrear"
+  [cargando]="creando"
+  (cerrar)="cerrarModalCrear()"
+  (crear)="crearPedido($event)"
+></app-view-pedido-nuevo>

@@ -28,25 +28,6 @@
 
       <div class="form-group">
 
-        <label for="tipoPago">Tipo de pago</label>
-
-        <select
-          id="tipoPago"
-          name="tipoPago"
-          [(ngModel)]="plan.tipoPago"
-          (ngModelChange)="cambiarTipoPago()"
-          required>
-
-          <option value="">Seleccione una modalidad</option>
-          <option value="CONTADO">Contado</option>
-          <option value="CREDITO">Crédito</option>
-
-        </select>
-
-      </div>
-
-      <div class="form-group">
-
         <label for="cantCuotas">Cantidad de cuotas</label>
 
         <input
@@ -54,17 +35,12 @@
           id="cantCuotas"
           name="cantCuotas"
           [(ngModel)]="plan.cantCuotas"
-          [readonly]="plan.tipoPago === 'CONTADO'"
           min="1"
           step="1"
           required
         />
 
-        <small *ngIf="plan.tipoPago === 'CONTADO'">
-          El pago al contado se registra con una cuota.
-        </small>
-
-        <small *ngIf="plan.tipoPago === 'CREDITO'">
+        <small>
           Selecciona la cantidad de cuotas que deseas generar.
         </small>
 
@@ -96,7 +72,6 @@
 
     <p><strong>ID del plan:</strong> {{ r.id }}</p>
     <p><strong>Venta:</strong> {{ r.ventaId }}</p>
-    <p><strong>Tipo:</strong> {{ r.tipoPago }}</p>
     <p><strong>Cuotas generadas:</strong> {{ r.cantCuotas }}</p>
 
     <h3>Cuotas generadas por el backend</h3>

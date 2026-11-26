@@ -19,7 +19,6 @@ export class ViewPlanPagoNuevo {
   private cdr = inject(ChangeDetectorRef);
 
   plan: PlanPagoRequest = {
-    tipoPago: '',
     cantCuotas: 1,
     ventaId: 0
   };
@@ -30,27 +29,11 @@ export class ViewPlanPagoNuevo {
   error = '';
   guardando = false;
 
-  cambiarTipoPago(): void {
-
-    if (this.plan.tipoPago === 'CONTADO') {
-      this.plan.cantCuotas = 1;
-    }
-
-    if (this.plan.tipoPago === 'CREDITO' && this.plan.cantCuotas <= 1) {
-      this.plan.cantCuotas = 2;
-    }
-  }
-
   guardar(): void {
 
     this.mensaje = '';
     this.error = '';
     this.resultado = null;
-
-    if (!this.plan.tipoPago) {
-      this.error = 'Selecciona un tipo de pago.';
-      return;
-    }
 
     if (!this.plan.ventaId || this.plan.ventaId <= 0) {
       this.error = 'Ingresa un ID de venta válido.';
@@ -65,22 +48,10 @@ export class ViewPlanPagoNuevo {
       return;
     }
 
-    if (
-      this.plan.tipoPago === 'CONTADO' &&
-      this.plan.cantCuotas !== 1
-    ) {
-      this.error = 'El pago al contado debe tener una cuota.';
+    if (this.plan.cantCuotas <= 0) {
+      this.error = 'El pago debe tener una cuota.';
       return;
     }
-
-    if (
-      this.plan.tipoPago === 'CREDITO' &&
-      this.plan.cantCuotas <= 1
-    ) {
-      this.error = 'El crédito debe tener más de una cuota.';
-      return;
-    }
-
     this.guardando = true;
 
     this.service.registrar(this.plan).subscribe({

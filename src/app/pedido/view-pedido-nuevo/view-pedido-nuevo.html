@@ -1,0 +1,78 @@
+<div class="modal-overlay" (click)="cerrarModal()">
+
+  <div class="modal-container" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div>
+        <h2>Crear nuevo pedido</h2>
+        <p>Genera un pedido utilizando un carrito existente.</p>
+      </div>
+
+      <button
+        class="btn-cerrar"
+        (click)="cerrarModal()"
+        [disabled]="cargando"
+      >
+        &times;
+      </button>
+    </div>
+
+    <form (ngSubmit)="crearPedido()">
+
+      <div class="modal-body">
+
+        <div class="informacion">
+          <strong>Información importante</strong>
+          <p>
+            El pedido se generará utilizando los productos
+            registrados en el carrito seleccionado.
+          </p>
+        </div>
+
+        <div class="campo">
+          <label for="carritoId">ID del carrito</label>
+
+          <input
+            id="carritoId"
+            type="number"
+            name="carritoId"
+            [(ngModel)]="carritoId"
+            placeholder="Ejemplo: 1"
+            min="1"
+            required
+            [disabled]="cargando"
+          />
+        </div>
+
+        <div class="mensaje-error" *ngIf="mensajeError">
+          {{ mensajeError }}
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button
+          type="button"
+          class="btn-cancelar"
+          (click)="cerrarModal()"
+          [disabled]="cargando"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          class="btn-crear"
+          [disabled]="cargando"
+        >
+          {{ cargando ? 'Creando pedido...' : 'Generar pedido' }}
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
